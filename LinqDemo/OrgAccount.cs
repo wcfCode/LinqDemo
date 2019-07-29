@@ -12,11 +12,11 @@ namespace LinqDemo
         private static List<Organization> orgs = new List<Organization>();
         private static List<Account> accounts = new List<Account>();
 
-        public static void StastTest()
+        public static void StartTest()
         {
             initialize();
-            string parentId = "0";//找组织id为1的下面的人员
-            string tenantId = "001";//找组织id为1的下面的人员
+            string parentId = "0";//找组织id为0的下面的人员
+            string tenantId = "001";//找租户为011的人员和组织
 
             List<(Organization, Account)> result = (from o in orgs join oa in organizationAccounts on o.Id equals oa.OrgId join a in accounts on oa.UserId equals a.Id where o.TenantId == tenantId select ( o, a )).ToList();
 
@@ -25,9 +25,11 @@ namespace LinqDemo
             List<OrganizationDTO> organizationDTOs = new List<OrganizationDTO>();
             foreach (var item in result)
             {
+                //查询添加过这个节点没有
                 OrganizationDTO organizationDTO = organizationDTOs.Where(x => x.Id == item.Item1.Id).FirstOrDefault();
+
                 if (organizationDTO == null)
-                {
+                {//没有添加过
                     organizationDTO = new OrganizationDTO()
                     {
                         Id = item.Item1.Id,
@@ -41,7 +43,7 @@ namespace LinqDemo
 
                 }
                 else
-                {
+                {//添加过
                     organizationDTO.Accounts.Add(item.Item2);
                 }
             }
@@ -55,9 +57,9 @@ namespace LinqDemo
             //先筛选出该组织和子组织
             List<(Organization, Account)> ps = SelectChild(result, parentId);
             //再取出用户
-
             //------------------------------查看这个结局-----------------------------------
             List<Account> resultaccounts = new List<Account>();
+
             foreach (var item in ps)
             {
                 if (!resultaccounts.Any(x => x.Id == item.Item2.Id))

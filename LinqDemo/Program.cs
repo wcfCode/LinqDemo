@@ -9,7 +9,7 @@ namespace LinqDemo
         static void Main(string[] args)
         {
 
-            OrgAccount.StastTest();
+            OrgAccount.StartTest();
         }
     }
 
